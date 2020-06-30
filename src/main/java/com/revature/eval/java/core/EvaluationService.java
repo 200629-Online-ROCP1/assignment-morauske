@@ -22,7 +22,12 @@ public class EvaluationService {
 
 		public static long toMilesPerHour(double kilometersPerHour) {
 			// TODO Write an implementation for this method declaration
-			return 0;
+			if (kilometersPerHour < 0) {
+				return -1;
+			}
+			else {
+				return (long)(kilometersPerHour * 0.6213711922);
+			}
 		}
 
 		/**
@@ -68,7 +73,15 @@ public class EvaluationService {
 	 */
 	public String printMegaBytesAndKiloBytes(int XX) {
 		// TODO Write an implementation for this method declaration
-		return null;
+		if (XX < 0) {
+			return "Invalid Value";
+		}
+		else
+		{
+			int mb = XX / 1024;
+			int kb = XX % 1024;  // KB left over
+			return (XX + " KB = " + mb + " MB and " + kb + " KB");
+		}
 	}
 
 	/**
@@ -92,7 +105,14 @@ public class EvaluationService {
 	 */
 	public boolean shouldWakeUp(boolean isBarking, int hourOfDay) {
 		// TODO Write an implementation for this method declaration
-		return false;
+		if ( (isBarking && (hourOfDay >=0)) && ( (hourOfDay > 22) || (hourOfDay < 8) ) ) 
+		{
+		  return true;
+		}
+		else 
+		{
+		  return false;
+		}
 	}
 
 	/**
@@ -108,7 +128,15 @@ public class EvaluationService {
 	 */
 	public boolean areEqualByThreeDecimalPlaces(double firstNum, double secondNum) {
 		// TODO Write an implementation for this method declaration
-		return false;
+		int fn = (int) (1000 * firstNum);
+		int sn = (int) (1000 * secondNum);
+		if (fn == sn) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	/**
@@ -125,7 +153,12 @@ public class EvaluationService {
 
 		public static boolean hasTeen(int x, int y, int z) {
 			// TODO Write an implementation for this method declaration
-			return false;
+			if (isTeen(x) || isTeen(y) || isTeen(z)) {
+				return true;
+			} 
+			else {
+			    return false;
+			}
 		}
 
 		// We can initialize isTeen method first
@@ -133,7 +166,12 @@ public class EvaluationService {
 
 		public static boolean isTeen(int number) {
 			// TODO Write an implementation for this method declaration
-			return false;
+			if ((number > 12) && (number < 20)) {
+				return true;
+			}
+			else {
+			    return false;
+			}
 		}
 	}
 
@@ -154,7 +192,20 @@ public class EvaluationService {
 	 */
 	public String printYearsAndDays(long minutes) {
 		// TODO Write an implementation for this method declaration
-		return null;
+		String result;
+		if (minutes >= 0) {
+			// 1440 = 60 * 24 = minutes in a day
+			int totalDays = (int) (minutes / 1440);
+			int years = totalDays/365;
+			int days = totalDays - (years * 365);
+			System.out.println (minutes + " min = "+ years +" y and "+ days +" d");
+			return (minutes + " min = "+ years +" y and "+ days +" d");
+		}
+		else
+		{
+			System.out.println ("Invalid Value");
+			return ("Invalid Value");
+		}
 	}
 
 	/**
@@ -168,7 +219,40 @@ public class EvaluationService {
 	 */
 	public String printNumberInWord(int number) {
 		// TODO Write an implementation for this method declaration
-		return null;
+		switch (number) {
+		case 0:
+			return "ZERO";
+			//break;
+		case 1:
+			return "ONE";
+			//break;
+		case 2:
+			return "TWO";
+			//break;
+		case 3:
+			return "THREE";
+			//break;
+		case 4:
+			return "FOUR";
+			//break;
+		case 5:
+			return "FIVE";
+			//break;
+		case 6:
+			return "SIX";
+			//break;
+		case 7:
+			return "SEVEN";
+			//break;
+		case 8:
+			return "EIGHT";
+			//break;
+		case 9:
+			return "NINE";
+			//break;
+		default:
+			return "OTHER";
+		}
 	}
 
 	/**
@@ -192,7 +276,29 @@ public class EvaluationService {
 	 */
 	public int getGreatestCommonDivisor(int first, int second) {
 		// TODO Write an implementation for this method declaration
-		return 0;
+		int smallest;
+		int largest;
+		
+		if (first < second) {
+			smallest = first;
+			largest = second;
+		} else {
+			smallest = second;
+			largest = first;
+		}
+		// Check for invalid values
+		if (smallest < 10) {
+			return -1;
+		}
+		
+		int gcd = largest / 2;  // GCD cannot be more than 1/2 of largest value.
+		while (gcd > 1) {
+			if ((smallest % gcd == 0) && (largest % gcd == 0)) {
+				return gcd;
+			}
+			gcd--;
+		}
+		return gcd;
 	}
 
 	/**
@@ -210,7 +316,25 @@ public class EvaluationService {
 	 */
 	public int sumFirstAndLastDigit(int num) {
 		// TODO Write an implementation for this method declaration
-		return 0;
+
+		if (num < 0) {
+			return -1;
+		}
+		int firstDigit;
+		int lastDigit;
+		int tmpNum = num;
+		int lastDigitsPlace=1;
+		firstDigit = num - (num/10)*10;  // First digit known
+		
+		// keep growing the last digits place holder
+		tmpNum /= 10;
+		while( tmpNum != 0) {
+			lastDigitsPlace *= 10;
+			tmpNum /= 10;
+		}
+		lastDigit = num / lastDigitsPlace;  // Last digit known
+		
+		return lastDigit + firstDigit;
 	}
 
 	/**
@@ -221,7 +345,15 @@ public class EvaluationService {
 	 */
 	public String reverse(String string) {
 		// TODO Write an implementation for this method declaration
-		return null;
+		char[] retStrOfChar = new char[string.length()];
+		
+		int j = 0;
+		for(int i = string.length()-1; i>= 0; i--) {
+			retStrOfChar[j] = string.charAt(i);
+			j++;
+		}
+		String ss = new String(retStrOfChar);
+		return ss;
 	}
 
 	/**
