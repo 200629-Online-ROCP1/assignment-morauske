@@ -1,7 +1,12 @@
 package com.revature.eval.java.core;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class EvaluationService {
 
@@ -26,7 +31,8 @@ public class EvaluationService {
 				return -1;
 			}
 			else {
-				return (long)(kilometersPerHour * 0.6213711922);
+				System.out.println(kilometersPerHour * 0.6213711922);
+				return (long)(Math.round(kilometersPerHour * 0.6213711922));
 			}
 		}
 
@@ -47,7 +53,12 @@ public class EvaluationService {
 		 */
 		public static String printConversion(double kilometersPerHour) {
 			// TODO Write an implementation for this method declaration
-			return null;
+			if (kilometersPerHour < 0) {
+				return "Invalid Value";
+			}
+			long mph = toMilesPerHour(kilometersPerHour);
+			String string = kilometersPerHour +" km/h = "+ mph +" mi/h";
+			return string;
 		}
 	}
 
@@ -365,7 +376,13 @@ public class EvaluationService {
 	 */
 	public String acronym(String phrase) {
 		// TODO Write an implementation for this method declaration
-		return null;
+		String[] spltStr = phrase.split("[ -]");
+		StringBuilder retVal = new StringBuilder();
+	    for (int i=0;i<spltStr.length;i++) {
+	    	System.out.println(Character.toUpperCase(spltStr[i].charAt(0)));
+	    	retVal.append(Character.toUpperCase(spltStr[i].charAt(0)));
+	    }		
+		return retVal.toString();
 	}
 
 	/**
@@ -421,21 +438,37 @@ public class EvaluationService {
 
 		public boolean isEquilateral() {
 			// TODO Write an implementation for this method declaration
-			return false;
+			if ((getSideThree() == getSideTwo()) && (getSideOne() == getSideTwo())) {
+				return true;
+			}else {
+				return false;
+			}
 		}
 
 		public boolean isIsosceles() {
 			// TODO Write an implementation for this method declaration
-			return false;
+			if ((getSideOne() == getSideTwo()) || (getSideOne() == getSideThree()) || (getSideTwo() == getSideThree())) {
+				return true;
+			}
+			else 
+			{
+				return false;
+			}
 		}
 
 		public boolean isScalene() {
 			// TODO Write an implementation for this method declaration
-			return false;
-		}
-
+			if ((getSideOne() != getSideTwo()) && 
+					(getSideOne() != getSideThree()) && 
+					(getSideTwo() != getSideThree())) {
+					return true;
+				}
+			    else 
+				{
+					return false;
+				}
+     	}
 	}
-
 	/**
 	 * 13. Scrabble Score
 	 * 
@@ -452,7 +485,42 @@ public class EvaluationService {
 	 */
 	public int getScrabbleScore(String string) {
 		// TODO Write an implementation for this method declaration
-		return 0;
+	    String onePoint = "AEIOULNRSTaeioulnrst";
+	    String twoPoint = "DGdg";
+	    String threePoint = "BCMPbcmp";
+	    String fourPoint = "FHVWYfhvwy";
+	    String fivePoint = "Kk";
+	    String eightPoint = "Xx";
+	    String tenPoint = "QZqz";
+
+	    int score = 0;
+	    for(int i = 0; i < string.length();i++) {
+	    	if (onePoint.indexOf(string.charAt(i)) > -1 ) {
+	    		score += 1;
+	    	}
+	    	else if(twoPoint.indexOf(string.charAt(i)) > -1 ) {
+	    		score += 2;
+	    	}
+	    	else if(threePoint.indexOf(string.charAt(i)) > -1 ) {
+	    		score += 3;
+	    	}
+	    	else if(fourPoint.indexOf(string.charAt(i)) > -1 ) {
+	    		score += 4;
+	    	}
+	    	else if(fivePoint.indexOf(string.charAt(i)) > -1 ) {
+	    		score += 5;
+	    	}
+	    	else if(eightPoint.indexOf(string.charAt(i)) > -1 ) {
+	    		score += 8;
+	    	}
+	    	else if(tenPoint.indexOf(string.charAt(i)) > -1 ) {
+	    		score += 10;
+	    	}
+	    	else {
+	    		score += 1000; // Shouldn't happen
+	    	}
+	    }		
+	    return score;
 	}
 
 	/**
@@ -488,8 +556,39 @@ public class EvaluationService {
 	 * Note: As this exercise only deals with telephone numbers used in
 	 * NANP-countries, only 1 is considered a valid country code.
 	 */
-	public String cleanPhoneNumber(String string) {
-		return null;
+	public String cleanPhoneNumber(String pString) {
+	    String nDigits = "23456789";
+	    String xDigits = "0123456789";
+	    String allValidDigits = xDigits + " .()-";
+	    StringBuilder phoneNum = new StringBuilder();
+
+	    int phoneDigitsFound = 0;
+	    char pDigit;
+	    int wordLen = pString.length();
+	    for(int i = 0; i < wordLen;i++) {
+	    	pDigit = pString.charAt(i);
+	    	// The 1st and the 4th digit are N-Digits
+	    	if ( ((phoneDigitsFound == 0) || (phoneDigitsFound == 3)) && ((nDigits.indexOf(pDigit)) > -1 )) {
+	    		//
+	    		phoneNum.append(pDigit);
+	    		++phoneDigitsFound;
+	    	}
+	    	// All other valid digits other than 1st and 4th are X-Digits
+	    	else if ( !((phoneDigitsFound == 0) || (phoneDigitsFound == 3)) && ((xDigits.indexOf(pDigit)) > -1 )) {
+	    		phoneNum.append(pDigit);
+	    		++phoneDigitsFound;
+	    	}
+	    	else if (!((allValidDigits.indexOf(pDigit)) > -1 )) {
+	    		// Throw and exception if invalid data is found
+	    		throw new IllegalArgumentException("Invalid character (" + pDigit + ")");
+	    	}
+	    }
+	    if ( phoneNum.length() != 10 ) {
+    		// Throw and exception if invalid data is found
+    		throw new IllegalArgumentException("Phone number digits not convertable to NXX-NXX-XXXX, num valid digits is (" + phoneNum.length() + ")");
+	    }
+	    	//System.out.println("PhoneNumber: "+phoneNum);
+		return phoneNum.toString();
 	}
 
 	/**
@@ -502,7 +601,23 @@ public class EvaluationService {
 	 */
 	public Map<String, Integer> wordCount(String string) {
 		// TODO Write an implementation for this method declaration
-		return null;
+		Pattern p = Pattern.compile("[a-zA-Z]+");
+		Matcher match = p.matcher(string);
+		//System.out.println("Words from string \"" + string + "\"\n"); 
+		Integer count;
+		HashMap<String, Integer> freqWd = new HashMap<String, Integer>();
+		
+		while (match.find()) {
+			String word = match.group();
+			System.out.println(word);
+			if (freqWd.containsKey(word)) {
+				count = freqWd.get(word) + 1;
+				freqWd.put(word, count);
+			}else {
+				freqWd.put(word, 1);
+			}
+		}
+		return freqWd;
 	}
 
 	/**
@@ -520,7 +635,32 @@ public class EvaluationService {
 	 * a number is an Armstrong number.
 	 */
 	public boolean isArmstrongNumber(int input) {
-		return false;
+		  int temp = input;
+		  int num = temp;
+		  int sum = 0;
+		  int digit;
+		  String sInput = String.valueOf(input);  // to find length of number.
+		  int power = sInput.length();			// create power to raise numbers to
+		  int pwrValue;							// Used to calculate the power value for each digit
+		  
+		  while(num > 0) {
+			  digit = num % 10;  // Strip first digit (LSV)
+			  num /= 10; 		 // Shrink Num by 1 digit (LSV) for next pass
+			  
+			  pwrValue = digit;	 // Gives me the ^1 value
+			  for(int i=1; i<power;i++) {
+				  pwrValue *= digit;  // Gives me the powers 2+ digit input values
+			  }
+			  sum += pwrValue;
+		  }
+	      
+		  if (sum == input) {
+			  //System.out.println("TRUE\n");
+			  return true;
+		  } else {
+			  //System.out.println("FALSE\n");
+			  return false;
+		  }
 	}
 
 	/**
@@ -531,9 +671,35 @@ public class EvaluationService {
 	 * 
 	 * Note that 1 is not a prime number.
 	 */
-	public List<Long> calculatePrimeFactorsOf(long l) {
+	public List<Long> calculatePrimeFactorsOf(long ln) {
 		// TODO Write an implementation for this method declaration
-		return null;
+		  ArrayList<Long> list=new ArrayList<Long>();
+		  
+	      // Print the number of 2s that divide n 
+	      while (ln % 2 == 0) { 
+	          System.out.print(2 + " ");
+	          list.add(2L);
+	          ln /= 2; 
+	      } 
+
+	      // n must be odd at this point.  So we can 
+	      // skip one element (Note i = i +2) 
+	      for (int i = 3; i <= Math.sqrt(ln); i += 2) { 
+	          // While i divides n, print i and divide n 
+	          while (ln % i == 0) { 
+	              System.out.print(i + " ");
+	              list.add(Long.valueOf(i));
+	              ln /= i; 
+	          } 
+	      } 
+
+	      // This condition is to handle the case whien 
+	      // n is a prime number greater than 2 
+	      if (ln > 2) {
+	          System.out.print(ln); 
+	          list.add(Long.valueOf(ln));
+	      }
+		return list;
 	}
 
 	/**
@@ -549,7 +715,32 @@ public class EvaluationService {
 	 */
 	public int calculateNthPrime(int k) {
 		// TODO Write an implementation for this method declaration
-		return 0;
+		if (k < 1) {
+			throw new IllegalArgumentException("Invalid argument (" + k + ")");
+		}
+		int num = 1;
+		int count = 0;
+		int i;  // needed also outside of for loop
+
+		while (count < k){
+			num += 1;
+			for (i = 2; i <= num; i++){ //Here we will loop from 2 to num
+				if (num % i == 0) {
+					break;
+				}
+			}
+			// To shorten time in finding a prime number dividing by numbers greater than
+			// 1/2 of the number doesn't help any.
+			if (i == (num/2)) {
+				i = num - 1;
+			}
+
+			if ( i == num){             //if it is a prime number
+				count += 1;
+			}
+		}
+
+		return num;
 	}
 
 	/**
@@ -566,7 +757,19 @@ public class EvaluationService {
 	 */
 	public boolean isPangram(String string) {
 		// TODO Write an implementation for this method declaration
-		return false;
+		  string = string.toLowerCase();
+		  System.out.println(string);
+		  
+		  char c = 'a';
+		  //System.out.println("("+(char)(c+1)+")");
+		  boolean pangram = true; // It is a panagram until proven otherwise.
+		  for(int i=0; i<26;i++) {
+			  if (string.indexOf((char)(c+i)) < 0) {
+				  pangram = false;
+				  break;
+			  }
+		  }
+		return pangram;
 	}
 
 	/**
@@ -580,8 +783,22 @@ public class EvaluationService {
 	 * 
 	 * The sum of these multiples is 78.
 	 */
-	public int getSumOfMultiples(int i, int[] set) {
-		return 0;
+	public int getSumOfMultiples(int limit, int[] set) {
+		
+		HashSet<Integer> multiples = new HashSet<Integer>();
+		for (int i=0; i < set.length; i++) {
+			int m = set[i];
+			while(m < limit) {
+				multiples.add(m);
+				m += set[i];
+			}
+		}
+		
+		int sumMultiples = 0;
+		for (Integer i : multiples) {
+			sumMultiples += i;
+		}
+		return sumMultiples;
 	}
 	
 	/**
@@ -595,7 +812,12 @@ public class EvaluationService {
 	 */
 	
 	public int[] threeLuckyNumbers() {
-		return null;
+		int[] luckyNums = new int[3];
+
+		for(int i = 0;i<luckyNums.length;i++) {
+			luckyNums[i] = ((int)(Math.random() * 101));
+		}
+		return luckyNums;
 	}
 	
 	/*
@@ -608,7 +830,7 @@ public class EvaluationService {
 	 * You must use the Math.random class to generate a random number between x and y.
 	 */
 	
-	public int guessingGame(int x, int y) {
-		return 0;
+	public int guessingGame(int lowerBound, int upperBound) {
+		return  (int)(Math.random() * ((upperBound - lowerBound) + 1) + lowerBound);
 	}
 }
